@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101015">
+  <meta name="description" content="Подкинь себе занятие под настроение, свободное время и бюджет.">
+  <title>Чем заняться? — Подкинь идею</title>
+  <style>
+:root {
+  color-scheme: dark;
+  --bg: #101015;
+  --surface: #19191f;
+  --surface-2: #222229;
+  --text: #f5f3f1;
+  --muted: #a5a1ad;
+  --lime: #d5ff52;
+  --pink: #ff70b5;
+  --line: #34333d;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 50% 5%, #25202a 0, var(--bg) 48rem); color: var(--text); }
+button, input { font: inherit; }
+button { color: inherit; }
+.page-shell { width: min(100% - 40px, 1100px); min-height: 100vh; margin: auto; display: flex; flex-direction: column; }
+.topbar { height: 82px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffffff12; }
+.brand { color: var(--text); text-decoration: none; font-size: 16px; font-weight: 800; letter-spacing: -.04em; }
+.brand-mark { color: var(--lime); font-size: 22px; vertical-align: -2px; margin-right: 6px; }
+.favorites-toggle { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 10px 15px; cursor: pointer; font-size: 13px; font-weight: 650; transition: border-color .2s, background .2s; }
+.favorites-toggle:hover { border-color: var(--lime); background: #d5ff520c; }
+.favorites-toggle > span:first-child { color: var(--pink); font-size: 18px; vertical-align: -1px; margin-right: 4px; }
+.favorite-count { display: inline-grid; place-items: center; margin-left: 5px; width: 20px; height: 20px; border-radius: 50%; color: var(--bg); background: var(--lime); font-size: 11px; }
+main { flex: 1; }
+.intro { text-align: center; padding: 62px 12px 38px; }
+.eyebrow { margin: 0 0 17px; color: var(--lime); text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 800; }
+.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 12px var(--pink); }
+h1 { margin: 0; font-size: clamp(48px, 7.6vw, 86px); letter-spacing: -.075em; line-height: .96; font-weight: 850; }
+h1 span { color: var(--lime); }
+.intro-copy { max-width: 510px; margin: 20px auto 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
+.planner { max-width: 815px; margin: 0 auto; padding: 27px 30px 25px; border: 1px solid #ffffff12; border-radius: 20px; background: #19191fbd; box-shadow: 0 20px 70px #0002; }
+.choice-group { border: 0; padding: 0; margin: 0 0 24px; }
+.choice-group legend { width: 100%; margin-bottom: 12px; font-size: 13px; font-weight: 750; }
+.step { color: #797681; font-size: 10px; letter-spacing: .08em; margin-right: 9px; }
+.choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.choice { position: relative; cursor: pointer; }
+.choice input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.choice span { display: flex; min-height: 43px; align-items: center; justify-content: center; gap: 7px; background: var(--surface-2); border: 1px solid transparent; border-radius: 10px; color: #d6d3da; font-size: 12px; transition: .18s ease; }
+.choice:hover span { border-color: #ffffff38; transform: translateY(-1px); }
+.choice input:checked + span { color: var(--lime); border-color: #d5ff5266; background: #d5ff520d; }
+.choice input:focus-visible + span { outline: 3px solid var(--pink); outline-offset: 3px; }
+.primary-button { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; min-height: 52px; margin-top: 3px; padding: 12px 20px; border: 0; border-radius: 11px; background: var(--lime); color: #171811; font-weight: 850; cursor: pointer; transition: transform .18s, box-shadow .18s; }
+.primary-button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px #d5ff5230; }
+.primary-button span:last-child { font-size: 19px; }
+.result-wrap { max-width: 815px; margin: 24px auto 44px; }
+.idea-card { position: relative; overflow: hidden; padding: 23px 27px 20px; min-height: 258px; border-radius: 18px; color: #17171b; background: var(--lime); animation: arrive .35s ease both; }
+.idea-card::after { content: ""; position: absolute; width: 250px; height: 250px; right: -120px; bottom: -165px; border: 1px solid #17171b20; border-radius: 50%; box-shadow: 0 0 0 25px #17171b08, 0 0 0 50px #17171b06; pointer-events: none; }
+.card-topline { display: flex; justify-content: space-between; align-items: center; }
+.idea-tag { font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.sparkle { font-size: 23px; }
+.idea-content { max-width: 650px; padding: 14px 0 12px; }
+.empty-kicker { margin: 0 0 7px; color: #454c24; font-size: 11px; font-weight: 800; }
+.idea-content h2 { margin: 0; font-size: clamp(27px, 4vw, 39px); line-height: 1.08; letter-spacing: -.055em; }
+.idea-description { max-width: 550px; margin: 10px 0 0; color: #363a25; font-size: 13px; line-height: 1.55; }
+.idea-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+.meta-chip { padding: 6px 9px; border-radius: 999px; background: #15170f17; color: #30331f; font-size: 10px; font-weight: 750; }
+.card-actions { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+.secondary-button { display: flex; gap: 12px; align-items: center; padding: 9px 13px; border: 1px solid #191a1650; border-radius: 8px; background: #171811; color: #fff; font-size: 11px; font-weight: 750; cursor: pointer; transition: transform .18s, background .18s; }
+.secondary-button:hover { background: #33342a; transform: translateY(-1px); }
+.secondary-button span { color: var(--lime); font-size: 16px; }
+.utility-actions { display: flex; gap: 7px; }
+.icon-button, .close-button { display: grid; place-items: center; width: 35px; height: 35px; border: 1px solid #191a1640; border-radius: 9px; background: #ffffff54; color: #171811; font-size: 20px; cursor: pointer; transition: .18s; }
+.icon-button:hover { background: white; transform: translateY(-1px); }
+.favorite-button.is-favorite { background: var(--pink); border-color: var(--pink); }
+.toast { min-height: 20px; margin: 9px 3px 0; color: var(--muted); font-size: 12px; text-align: center; }
+.favorites-panel { position: fixed; z-index: 5; top: 74px; right: max(20px, calc((100vw - 1100px)/2)); width: min(390px, calc(100vw - 40px)); max-height: min(70vh, 560px); overflow: auto; padding: 21px; border: 1px solid #ffffff20; border-radius: 16px; background: #1d1d24; box-shadow: 0 20px 70px #0009; animation: arrive .2s ease both; }
+.favorites-heading { display: flex; justify-content: space-between; align-items: flex-start; }
+.favorites-heading .eyebrow { margin-bottom: 4px; font-size: 9px; }
+.favorites-heading h2 { margin: 0; font-size: 22px; letter-spacing: -.04em; }
+.favorites-heading h2 span { color: var(--lime); font-size: 13px; }
+.close-button { width: 30px; height: 30px; border-color: var(--line); background: transparent; color: var(--muted); font-size: 22px; }
+.favorites-list { display: grid; gap: 9px; margin-top: 18px; }
+.favorite-item { padding: 13px; border-radius: 10px; background: var(--surface-2); }
+.favorite-item h3 { margin: 0 0 5px; font-size: 14px; }
+.favorite-item p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.favorite-item-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: var(--lime); font-size: 10px; }
+.remove-favorite { border: 0; background: none; color: var(--pink); cursor: pointer; font-size: 11px; }
+.empty-favorites { margin: 0; padding: 18px 8px; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.6; }
+footer { display: flex; justify-content: center; align-items: center; gap: 9px; padding: 18px 0 24px; border-top: 1px solid #ffffff12; color: #74717d; font-size: 10px; }
+.footer-star { color: var(--pink); }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+@keyframes arrive { from { opacity: .45; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 620px) {
+  .page-shell { width: min(100% - 28px, 500px); }
+  .topbar { height: 68px; }
+  .intro { padding: 48px 2px 28px; }
+  .intro-copy { max-width: 370px; font-size: 13px; }
+  .planner { padding: 21px 16px 17px; border-radius: 15px; }
+  .choice-group { margin-bottom: 20px; }
+  .choices { gap: 6px; }
+  .choice span { min-height: 48px; padding: 5px 3px; flex-direction: column; gap: 2px; font-size: 10px; }
+  .choice span b { font-weight: 700; }
+  .idea-card { padding: 19px 18px 17px; min-height: 245px; }
+  .idea-content { padding-top: 17px; }
+  .result-wrap { margin-top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+  </style>
+
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Чем заняться — на главную"><span class="brand-mark">✳</span> чё делаем?</a>
+      <button class="favorites-toggle" id="favorites-toggle" type="button" aria-expanded="false" aria-controls="favorites-panel">
+        <span aria-hidden="true">♡</span> Избранное <span class="favorite-count" id="favorite-count">0</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow"><span class="live-dot"></span> генератор планов без душноты</p>
+        <h1 id="page-title">Планов нет.<br><span>Зато есть мы.</span></h1>
+        <p class="intro-copy">Выбери вайб, сколько у тебя времени и бюджет — найдём, чем занять этот прекрасный (или обычный) день.</p>
+      </section>
+
+      <section class="planner" aria-label="Настройки идеи">
+        <fieldset class="choice-group">
+          <legend><span class="step">01</span> Какой вайб?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mood" value="chill" checked><span>😌 <b>Чиллю</b></span></label>
+            <label class="choice"><input type="radio" name="mood" value="active"><span>⚡ <b>Хочу движ</b></span></label>
+            <label class="choice"><input type="radio" name="mood" value="any"><span>🫠 <b>Всё равно</b></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="choice-group">
+          <legend><span class="step">02</span> Сколько есть времени?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="time" value="15" checked><span>⏱ <b>15 минут</b></span></label>
+            <label class="choice"><input type="radio" name="time" value="60"><span>⌛ <b>Час</b></span></label>
+            <label class="choice"><input type="radio" name="time" value="evening"><span>🌙 <b>Весь вечер</b></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="choice-group">
+          <legend><span class="step">03</span> Что по бюджету?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="budget" value="free" checked><span>🆓 <b>Бесплатно</b></span></label>
+            <label class="choice"><input type="radio" name="budget" value="cheap"><span>🪙 <b>Недорого</b></span></label>
+            <label class="choice"><input type="radio" name="budget" value="any"><span>💸 <b>Любой</b></span></label>
+          </div>
+        </fieldset>
+        <button class="primary-button" id="suggest-button" type="button"><span>Подкинь идею</span><span aria-hidden="true">↗</span></button>
+      </section>
+
+      <section class="result-wrap" aria-label="Идея для тебя" aria-live="polite" aria-atomic="true">
+        <article class="idea-card" id="idea-card">
+          <div class="card-topline"><span class="idea-tag" id="idea-tag">ТВОЙ СЛЕДУЮЩИЙ ПЛАН</span><span class="sparkle" aria-hidden="true">✳</span></div>
+          <div class="idea-content" id="idea-content">
+            <p class="empty-kicker">Решение близко</p>
+            <h2>Вселенная ждёт<br>твой выбор.</h2>
+            <p class="idea-description">Жми на кнопку — и получи план, который реально впишется в твой день.</p>
+          </div>
+          <div class="idea-meta" id="idea-meta" hidden></div>
+          <div class="card-actions" id="card-actions" hidden>
+            <button class="secondary-button" id="another-button" type="button">Ещё вариант <span aria-hidden="true">⟳</span></button>
+            <div class="utility-actions">
+              <button class="icon-button" id="copy-button" type="button" aria-label="Скопировать идею" title="Скопировать идею">▢</button>
+              <button class="icon-button favorite-button" id="favorite-button" type="button" aria-label="Добавить в избранное" title="Добавить в избранное">♡</button>
+            </div>
+          </div>
+        </article>
+        <p class="toast" id="toast" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="favorites-panel" id="favorites-panel" hidden aria-labelledby="favorites-title">
+        <div class="favorites-heading"><div><p class="eyebrow">твоя коллекция</p><h2 id="favorites-title">Избранное <span id="panel-count">0</span></h2></div><button class="close-button" id="close-favorites" type="button" aria-label="Закрыть избранное">×</button></div>
+        <div class="favorites-list" id="favorites-list"></div>
+      </aside>
+    </main>
+    <footer><span>Сделано для тех, кто завис на «ну не знаю».</span><span class="footer-star">✳</span></footer>
+  </div>
+<script>
+const ideas = [
+  { title: 'Собери плейлист «я главный герой»', description: 'Пять треков для прогулки, уборки или эпичного похода за хлебом. Бонус: драматично смотри в окно.', time: 15, minutes: 15, budget: 'free', cost: 'Бесплатно', mood: 'chill' },
+  { title: 'Устрой экспресс-перезагрузку комнаты', description: 'Поставь таймер на 15 минут, включи бодрый трек и разбери один маленький угол. Не всю жизнь — только стол.', time: 15, minutes: 15, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Нарисуй карту сокровищ до кухни', description: 'Вообрази, что путь к чаю — это квест. Можно добавить дракона, охраняющего печенье.', time: 15, minutes: 15, budget: 'free', cost: 'Бесплатно', mood: 'any' },
+  { title: 'Сделай дегустацию того, что уже есть', description: 'Собери мини-тарелку из домашних вкусняшек и оцени каждую как строгий, но справедливый фуд-критик.', time: 15, minutes: 15, budget: 'cheap', cost: 'Недорого', mood: 'chill' },
+  { title: 'Танцевальный перерыв без свидетелей', description: 'Включи три любимых трека и двигайся так, будто хореографию придумал случайный генератор.', time: 15, minutes: 15, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Прогулка с миссией «найди странное»', description: 'Выйди на улицу и найди три вещи, которые обычно не замечаешь. Голубь в деловом настроении тоже считается.', time: 60, minutes: 60, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Свари напиток уровня «уютный бариста»', description: 'Чай, какао или кофе — подай красиво, придумай ему название и пей без параллельного скролла.', time: 60, minutes: 60, budget: 'cheap', cost: 'Недорого', mood: 'chill' },
+  { title: 'Устрой фотоохоту в своём районе', description: 'Найди пять красивых теней, ярких дверей или случайных котов. Режим документального фотографа включён.', time: 60, minutes: 60, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Мини-киновечер с рандомным жанром', description: 'Выбери фильм по настроению, приготовь попкорн и устрой себе премьеру с максимально серьёзной рецензией после.', time: 60, minutes: 60, budget: 'cheap', cost: 'Недорого', mood: 'chill' },
+  { title: 'Прокачай один навык за один урок', description: 'Найди бесплатный урок по оригами, быстрым скетчам или жонглированию мандаринами. Один ролик — уже начало.', time: 60, minutes: 60, budget: 'free', cost: 'Бесплатно', mood: 'any' },
+  { title: 'Маршрут «куда глаза глядят»', description: 'Выбери новое направление и гуляй без цели. Можно закончить у любимой булочной — это сюжетный поворот.', time: 60, minutes: 60, budget: 'cheap', cost: 'Недорого', mood: 'active' },
+  { title: 'Собери вечер настолок или карточных игр', description: 'Позови компанию, достань знакомую игру или придумай свою. Главное правило: проигравший выбирает следующий плейлист.', time: 180, minutes: 180, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Домашний спа-день, версия «я заслужил»', description: 'Тёплый душ, маска из запасов, спокойная музыка и режим «сегодня я никуда не тороплюсь».', time: 180, minutes: 180, budget: 'cheap', cost: 'Недорого', mood: 'chill' },
+  { title: 'Приготовь блюдо из нового рецепта', description: 'Выбери то, что давно хотелось попробовать. Кухонный хаос — это просто спецэффекты к твоему шоу.', time: 180, minutes: 180, budget: 'cheap', cost: 'Недорого', mood: 'any' },
+  { title: 'Вечерний городской квест', description: 'Составь маршрут через незнакомые улицы, красивый вид и место с десертом. Задание: вернуться с историей.', time: 180, minutes: 180, budget: 'any', cost: 'На любой бюджет', mood: 'active' },
+  { title: 'Устрой марафон любимой вселенной', description: 'Фильм, сериал, комикс или игра — погрузись с комфортом, запасом снеков и официальным разрешением не спешить.', time: 180, minutes: 180, budget: 'any', cost: 'На любой бюджет', mood: 'chill' },
+  { title: 'Сделай вечер «турист в своём городе»', description: 'Зайди в новое кафе, загляни в музей или просто исследуй место, мимо которого обычно проходишь.', time: 180, minutes: 180, budget: 'any', cost: 'На любой бюджет', mood: 'any' },
+  { title: 'Создай капсулу времени для себя будущего', description: 'Запиши прогнозы, желания и мем недели. Спрячь заметку и открой через год: будет либо мило, либо очень смешно.', time: 60, minutes: 60, budget: 'free', cost: 'Бесплатно', mood: 'chill' },
+  { title: 'Устрой зарядку под саундтрек боевика', description: 'Десять минут разминки под музыку, с которой даже выпады выглядят как сцена спасения мира.', time: 15, minutes: 15, budget: 'free', cost: 'Бесплатно', mood: 'active' },
+  { title: 'Сходи на концерт, выставку или в новое место', description: 'Найди событие поблизости и выбери то, что обычно откладывал. Иногда лучший план — выйти за рамки маршрута.', time: 180, minutes: 180, budget: 'any', cost: 'На любой бюджет', mood: 'active' }
+];
+
+const $ = (selector) => document.querySelector(selector);
+const ideaContent = $('#idea-content');
+const ideaMeta = $('#idea-meta');
+const cardActions = $('#card-actions');
+let currentIdea = null;
+let shownIds = new Set();
+let favorites = loadFavorites();
+let toastTimer;
+
+function loadFavorites() {
+  try { return JSON.parse(localStorage.getItem('che-delajem-favorites') || '[]'); }
+  catch { return []; }
+}
+
+function selected(name) { return document.querySelector(`input[name="${name}"]:checked`).value; }
+function timeLabel(time) { return time === 15 ? '15 минут' : time === 60 ? 'Около часа' : 'Весь вечер'; }
+
+function score(idea, mood, time, budget) {
+  let value = 0;
+  if (mood !== 'any' && idea.mood !== mood) value += 3;
+  if (time === '15' && idea.time > 15) value += idea.time === 60 ? 4 : 7;
+  if (time === '60' && idea.time > 60) value += 4;
+  if (time === 'evening' && idea.time < 60) value += 1;
+  if (budget === 'free' && idea.budget !== 'free') value += idea.budget === 'cheap' ? 3 : 5;
+  if (budget === 'cheap' && idea.budget === 'any') value += 2;
+  return value;
+}
+
+function suggest() {
+  const mood = selected('mood');
+  const time = selected('time');
+  const budget = selected('budget');
+  const ranked = ideas.map((idea, index) => ({ idea, index, score: score(idea, mood, time, budget) })).sort((a, b) => a.score - b.score);
+  const remaining = ranked.filter((item) => !shownIds.has(item.index));
+  const bestScore = remaining[0].score;
+  const candidates = remaining.filter((item) => item.score === bestScore);
+  const pick = candidates[Math.floor(Math.random() * candidates.length)];
+  currentIdea = pick.idea;
+  shownIds.add(pick.index);
+  renderIdea(currentIdea, pick.score > 0);
+  $('#toast').textContent = '';
+}
+
+function renderIdea(idea, nearby = false) {
+  $('#idea-tag').textContent = nearby ? 'БЛИЖАЙШЕЕ ПОПАДАНИЕ' : 'ПЛАН ДЛЯ ТВОЕГО ВАЙБА';
+  ideaContent.innerHTML = `<p class="empty-kicker">${nearby ? 'Почти идеальный мэтч' : 'Твой следующий план'}</p><h2></h2><p class="idea-description"></p>`;
+  ideaContent.querySelector('h2').textContent = idea.title;
+  ideaContent.querySelector('.idea-description').textContent = idea.description;
+  ideaMeta.innerHTML = '';
+  [`⏱ ${timeLabel(idea.minutes)}`, `₽ ${idea.cost}`].forEach((label) => {
+    const chip = document.createElement('span'); chip.className = 'meta-chip'; chip.textContent = label; ideaMeta.append(chip);
+  });
+  ideaMeta.hidden = false;
+  cardActions.hidden = false;
+  updateFavoriteButton();
+  const card = $('#idea-card');
+  card.style.animation = 'none';
+  requestAnimationFrame(() => { card.style.animation = ''; });
+}
+
+function updateFavoriteButton() {
+  const saved = currentIdea && favorites.some((item) => item.title === currentIdea.title);
+  const button = $('#favorite-button');
+  button.classList.toggle('is-favorite', Boolean(saved));
+  button.textContent = saved ? '♥' : '♡';
+  button.setAttribute('aria-label', saved ? 'Убрать из избранного' : 'Добавить в избранное');
+  button.title = saved ? 'Убрать из избранного' : 'Добавить в избранное';
+}
+
+function saveFavorites() {
+  localStorage.setItem('che-delajem-favorites', JSON.stringify(favorites));
+  renderFavorites();
+}
+
+function renderFavorites() {
+  const list = $('#favorites-list');
+  list.replaceChildren();
+  $('#favorite-count').textContent = favorites.length;
+  $('#panel-count').textContent = favorites.length;
+  if (!favorites.length) {
+    const empty = document.createElement('p'); empty.className = 'empty-favorites'; empty.textContent = 'Тут пока пусто. Сохрани идею сердечком — и она останется здесь.'; list.append(empty);
+    return;
+  }
+  favorites.forEach((idea) => {
+    const item = document.createElement('article'); item.className = 'favorite-item';
+    const title = document.createElement('h3'); title.textContent = idea.title;
+    const description = document.createElement('p'); description.textContent = idea.description;
+    const bottom = document.createElement('div'); bottom.className = 'favorite-item-bottom';
+    const meta = document.createElement('span'); meta.textContent = `${timeLabel(idea.minutes)} · ${idea.cost}`;
+    const remove = document.createElement('button'); remove.className = 'remove-favorite'; remove.type = 'button'; remove.textContent = 'Убрать';
+    remove.addEventListener('click', () => { favorites = favorites.filter((saved) => saved.title !== idea.title); saveFavorites(); updateFavoriteButton(); });
+    bottom.append(meta, remove); item.append(title, description, bottom); list.append(item);
+  });
+}
+
+function notify(message) {
+  const toast = $('#toast'); toast.textContent = message;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.textContent = ''; }, 2800);
+}
+
+$('#suggest-button').addEventListener('click', () => { shownIds = new Set(); suggest(); });
+$('#another-button').addEventListener('click', suggest);
+$('#favorite-button').addEventListener('click', () => {
+  if (!currentIdea) return;
+  const exists = favorites.some((idea) => idea.title === currentIdea.title);
+  favorites = exists ? favorites.filter((idea) => idea.title !== currentIdea.title) : [...favorites, currentIdea];
+  saveFavorites(); updateFavoriteButton();
+  notify(exists ? 'Убрали из избранного.' : 'Сохранено! Идея теперь в избранном.');
+});
+$('#copy-button').addEventListener('click', async () => {
+  if (!currentIdea) return;
+  const text = `${currentIdea.title}\n${currentIdea.description}\n⏱ ${timeLabel(currentIdea.minutes)} · ${currentIdea.cost}`;
+  try {
+    if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+    else {
+      const field = document.createElement('textarea'); field.value = text; field.style.position = 'fixed'; field.style.opacity = '0'; document.body.append(field); field.select();
+      const copied = document.execCommand('copy'); field.remove(); if (!copied) throw new Error('Copy failed');
+    }
+    notify('Скопировано! Можно отправлять в чат ✨');
+  } catch { notify('Не получилось скопировать. Попробуй ещё раз.'); }
+});
+
+const panel = $('#favorites-panel');
+function toggleFavorites(open) {
+  panel.hidden = !open;
+  $('#favorites-toggle').setAttribute('aria-expanded', String(open));
+  if (open) $('#close-favorites').focus(); else $('#favorites-toggle').focus();
+}
+$('#favorites-toggle').addEventListener('click', () => toggleFavorites(panel.hidden));
+$('#close-favorites').addEventListener('click', () => toggleFavorites(false));
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !panel.hidden) toggleFavorites(false); });
+
+renderFavorites();
+
+</script>
+</body>
+</html>
+
